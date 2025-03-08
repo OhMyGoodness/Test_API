@@ -20,7 +20,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserLoginResource'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AutoResource'
         '401':
           description: Unauthorized
         '404':

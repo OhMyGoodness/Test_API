@@ -29,9 +29,11 @@ class AutoController extends Controller
      *   @OA\Response(
      *       response=200,
      *       description="OK",
-     *       @OA\MediaType(
-     *           mediaType="application/json",
-     *           @OA\Schema(ref="#/components/schemas/UserLoginResource")
+     *       @OA\JsonContent(
+     *           type="array",
+     *           @OA\Items(
+     *               ref="#/components/schemas/AutoResource"
+     *           )
      *       )
      *   ),
      *   @OA\Response(response=401, description="Unauthorized"),
