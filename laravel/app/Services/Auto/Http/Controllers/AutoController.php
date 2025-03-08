@@ -83,6 +83,13 @@ class AutoController extends Controller
      * @OA\Patch(
      *     path="/auto/{id}",
      *     tags={"Auto"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of auto",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *     ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
@@ -112,7 +119,15 @@ class AutoController extends Controller
     /**
      * @OA\Delete(
      *     path="/auto/{id}",
-     *     tags={"Auto"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of auto",
+     *         required=true,
+     *         @OA\Schema(type="integer"),
+     *     ),
+     *     @OA\Schema(type="integer"),
+     *         *     tags={"Auto"},
      *     @OA\Response(response=201, description="Ok"),
      *     @OA\Response(response=401, description="Unauthorized"),
      *     @OA\Response(response=404, description="Not Found")

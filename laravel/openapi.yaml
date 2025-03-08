@@ -52,6 +52,14 @@ paths:
       tags:
         - Auto
       operationId: 1dc1c9060f0e18e3dee7db082bd526f8
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto'
+          required: true
+          schema:
+            type: integer
       responses:
         '201':
           description: Ok
@@ -63,6 +71,14 @@ paths:
       tags:
         - Auto
       operationId: beea1edf8a9fdfb7d9547189da17ebdb
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto'
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
