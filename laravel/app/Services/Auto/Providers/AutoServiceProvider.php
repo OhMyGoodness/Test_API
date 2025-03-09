@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Auto;
+namespace App\Services\Auto\Providers;
 
 use App\Services\Auto\Interfaces\AutoServiceInterface;
+use App\Services\Auto\Services\AutoService;
 use Carbon\Laravel\ServiceProvider;
 use phpDocumentor\Reflection\Exception;
 

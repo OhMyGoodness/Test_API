@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Auto\Http\Controllers\AutoController;
+use App\Services\Auto\Http\Controllers\AutoMarkController;
 use App\Services\User\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,8 @@ Route::prefix('{version}')
     ->group(function () {
         Route::get('auth/login', [AuthController::class, 'login'])->name('v1.auth.login');
 
-        Route::resource('auto', AutoController::class, ['only' => ['index', 'store', 'update', 'destroy']]);
+        $only = ['index', 'store', 'update', 'destroy'];
+        Route::resource('auto', AutoController::class, ['only' => $only]);
+        Route::resource('auto.mark', AutoMarkController::class, ['only' => $only]);
     });
 

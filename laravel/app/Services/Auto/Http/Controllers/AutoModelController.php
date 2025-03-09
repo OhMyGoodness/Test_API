@@ -3,37 +3,27 @@
 namespace App\Services\Auto\Http\Controllers;
 
 use App\Http\Controllers\ResourceController;
-use App\Services\Auto\Http\Requests\AutoRequest;
-use App\Services\Auto\Interfaces\AutoServiceInterface;
+use App\Services\Auto\Services\AutoModelService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 /**
  * @package App\Services\Auto\Http\Controllers
  */
-class AutoController extends ResourceController
+class AutoModelController extends ResourceController
 {
     /**
-     *
-     * @param AutoServiceInterface $autoService
+     * @param AutoModelService $autoModelService
      */
-    public function __construct(private readonly AutoServiceInterface $autoService)
+    public function __construct(private readonly AutoModelService $autoModelService)
     {
-    }
-
-    /**
-     * @return string
-     */
-    public function getRequestClass(): string
-    {
-        return AutoRequest::class;
     }
 
     /**
      * @OA\Get(
-     *   path="/auto",
+     *   path="/auto_model",
      *   tags={"Auto"},
      *   @OA\Response(
      *       response=200,
@@ -41,7 +31,7 @@ class AutoController extends ResourceController
      *       @OA\JsonContent(
      *           type="array",
      *           @OA\Items(
-     *               ref="#/components/schemas/AutoResource"
+     *               ref="#/components/schemas/AutoModelResource"
      *           )
      *       )
      *   ),
@@ -53,19 +43,17 @@ class AutoController extends ResourceController
      */
     public function index(): ResourceCollection
     {
-        $userId = Auth::user()->id ?? null;
-
-        return $userId ? $this->autoService->listByUserId($userId) : $this->autoService->list();
+        return $this->autoModelService->list();
     }
 
     /**
      * @OA\Post(
-     *     path="/auto",
+     *     path="/auto_model",
      *     tags={"Auto"},
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoRequest")
+     *             @OA\Schema(ref="#/components/schemas/AutoModelRequest")
      *         )
      *     ),
      *     @OA\Response(
@@ -73,7 +61,7 @@ class AutoController extends ResourceController
      *         description="OK",
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoResource")
+     *             @OA\Schema(ref="#/components/schemas/AutoModelResource")
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthorized"),
@@ -85,24 +73,24 @@ class AutoController extends ResourceController
      */
     public function store(Request $request): JsonResource
     {
-        return $this->autoService->create($this->getDTO());
+        return $this->autoModelService->create($this->getDTO());
     }
 
     /**
      * @OA\Patch(
-     *     path="/auto/{id}",
+     *     path="/auto_model/{id}",
      *     tags={"Auto"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of auto",
+     *         description="ID of auto model",
      *         required=true,
      *         @OA\Schema(type="integer"),
      *     ),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoRequest")
+     *             @OA\Schema(ref="#/components/schemas/AutoModelRequest")
      *         )
      *     ),
      *     @OA\Response(
@@ -110,7 +98,7 @@ class AutoController extends ResourceController
      *         description="OK",
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoResource")
+     *             @OA\Schema(ref="#/components/schemas/AutoModelResource")
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthorized"),
@@ -122,17 +110,17 @@ class AutoController extends ResourceController
      */
     public function update(int $id, Request $request): JsonResource
     {
-        return $this->autoService->update($id, $this->getDTO());
+        return $this->autoModelService->update($id, $this->getDTO());
     }
 
     /**
      * @OA\Delete(
-     *     path="/auto/{id}",
+     *     path="/auto_model/{id}",
      *     tags={"Auto"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of auto",
+     *         description="ID of auto model",
      *         required=true,
      *         @OA\Schema(type="integer"),
      *     ),
@@ -147,6 +135,14 @@ class AutoController extends ResourceController
      */
     public function destroy(int $id): void
     {
-        $this->autoService->destroy($id);
+        $this->autoModelService->destroy($id);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRequestClass(): string
+    {
+        return AutoModelRequest::class;
     }
 }

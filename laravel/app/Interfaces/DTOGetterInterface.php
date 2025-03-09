@@ -3,10 +3,10 @@
 namespace App\Interfaces;
 
 /**
- * Interface IDTOGetter
+ * Interface DTOGetterInterface
  * @package App\Interfaces
  */
-interface IDTOGetter
+interface DTOGetterInterface
 {
     /**
      * @return mixed

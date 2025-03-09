@@ -95,6 +95,178 @@ paths:
           description: Unauthorized
         '404':
           description: 'Not Found'
+  /auto_mark:
+    get:
+      tags:
+        - Auto
+      operationId: a3ecdf9e756384de939ade4aaf2b87d7
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AutoMarkResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+    post:
+      tags:
+        - Auto
+      operationId: f97e01c91502559c0916735cb4865325
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoMarkRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoMarkResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+  '/auto_mark/{id}':
+    delete:
+      tags:
+        - Auto
+      operationId: d453fd4b9ec596e886186dd189ca8247
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto mark'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Ok
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+    patch:
+      tags:
+        - Auto
+      operationId: 84f63c3323a5305e2404d3ff95072f24
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto mark'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoMarkRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoMarkResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+  /auto_model:
+    get:
+      tags:
+        - Auto
+      operationId: 01fd57b871819e3a209e3c4e2646b43e
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AutoModelResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+    post:
+      tags:
+        - Auto
+      operationId: 9be62fbbb2a9864655140374905b1281
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoModelRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoModelResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+  '/auto_model/{id}':
+    delete:
+      tags:
+        - Auto
+      operationId: 9bc0f999e51d1b11aab75135697cb1f3
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto model'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Ok
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
+    patch:
+      tags:
+        - Auto
+      operationId: c6be81a9458127495efe0c6db8b3c7e3
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of auto model'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoModelRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutoModelResource'
+        '401':
+          description: Unauthorized
+        '404':
+          description: 'Not Found'
   /auth/login:
     post:
       tags:
@@ -115,6 +287,20 @@ paths:
           description: UNAUTHORIZED
 components:
   schemas:
+    AutoMarkRequest:
+      required:
+        - name
+      properties:
+        name:
+          $ref: '#/components/schemas/AutoMark/properties/name'
+      type: object
+    AutoModelRequest:
+      required:
+        - name
+      properties:
+        name:
+          $ref: '#/components/schemas/AutoModel/properties/name'
+      type: object
     AutoRequest:
       required:
         - year

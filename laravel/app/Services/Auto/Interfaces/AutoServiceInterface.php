@@ -34,4 +34,6 @@ interface AutoServiceInterface
      * @return JsonResource
      */
     public function update(int $id, AutoDTO $data): JsonResource;
+
+    public function destroy(int $id): void;
 }

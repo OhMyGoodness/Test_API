@@ -3,6 +3,7 @@
 namespace App\Services\Auto\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $model_id ID модели
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ *
+ * @method static byId(int $id)
  *
  * @OA\Schema(schema="AutoMark",
  *     @OA\Property(property="id", type="integer", description="ID", example="1"),
@@ -28,15 +31,13 @@ class AutoMark extends Model
     use HasFactory;
 
     /**
-     * @var string
-     */
-    protected $table = 'auto_marks';
-
-    /**
      * @var bool
      */
     public $timestamps = true;
-
+    /**
+     * @var string
+     */
+    protected $table = 'auto_marks';
     /**
      * @var string[]
      */
@@ -61,5 +62,15 @@ class AutoMark extends Model
     public function model(): BelongsTo
     {
         return $this->belongsTo(Model::class);
+    }
+
+    /**
+     * @param Builder $query
+     * @param int $id
+     * @return Builder
+     */
+    public function scopeById(Builder $query, int $id): Builder
+    {
+        return $query->where('id', $id);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Services\Auto\Http\Requests;
 
-use App\Interfaces\IDTOGetter;
+use App\Interfaces\DTOGetterInterface;
 use App\Services\Auto\DTO\AutoDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -20,7 +20,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * @package App\Services\Auto\Http\Requests
  */
-class AutoRequest extends FormRequest implements IDTOGetter
+class AutoRequest extends FormRequest implements DTOGetterInterface
 {
     /**
      * @return string[]

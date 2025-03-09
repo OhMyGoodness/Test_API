@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Auto\AutoServiceProvider;
+use App\Services\Auto\Providers\AutoServiceProvider;
 
 return [
     App\Providers\AppServiceProvider::class,

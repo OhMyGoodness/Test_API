@@ -2,7 +2,7 @@
 
 namespace App\Services\User\Http\Requests;
 
-use App\Interfaces\IDTOGetter;
+use App\Interfaces\DTOGetterInterface;
 use App\Services\User\DTO\UserLoginDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,7 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * @package App\Services\User\Http\Requests
  */
-class UserLoginRequest extends FormRequest implements IDTOGetter
+class UserLoginRequest extends FormRequest implements DTOGetterInterface
 {
     /**
      * @return string[]

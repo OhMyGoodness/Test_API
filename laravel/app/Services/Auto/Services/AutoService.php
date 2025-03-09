@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Auto;
+namespace App\Services\Auto\Services;
 
 use App\Services\Auto\DTO\AutoDTO;
-use App\Services\Auto\Http\Requests\AutoRequest;
 use App\Services\Auto\Interfaces\AutoServiceInterface;
 use App\Services\Auto\Models\Auto;
 use App\Services\Auto\Resources\AutoResource;
@@ -60,5 +59,14 @@ class AutoService implements AutoServiceInterface
         return new AutoResource(
             $auto
         );
+    }
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function destroy(int $id): void
+    {
+        Auto::destroy($id);
     }
 }

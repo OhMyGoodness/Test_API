@@ -3,6 +3,7 @@
 namespace App\Services\Auto\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property AutoMark $mark
+ *
+ * @method static byId(int $id)
  *
  * @OA\Schema(schema="AutoModel",
  *   @OA\Property(property="id", type="integer", description="ID", example="1"),
@@ -50,4 +53,14 @@ class AutoModel extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * @param Builder $query
+     * @param int $id
+     * @return Builder
+     */
+    public function scopeById(Builder $query, int $id): Builder
+    {
+        return $query->where('id', $id);
+    }
 }
