@@ -3,8 +3,8 @@
 namespace App\Services\Auto\Http\Controllers;
 
 use App\Http\Controllers\ResourceController;
+use App\Services\Auto\Http\Requests\AutoModelRequest;
 use App\Services\Auto\Services\AutoModelService;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Request;
