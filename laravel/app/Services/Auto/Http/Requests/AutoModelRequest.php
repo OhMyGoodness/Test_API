@@ -3,7 +3,7 @@
 namespace App\Services\Auto\Http\Requests;
 
 use App\Interfaces\DTOGetterInterface;
-use App\Services\Auto\DTO\AutoModelDTO;
+use App\Services\Auto\DTO\Request\AutoModelRequestDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -18,20 +18,56 @@ use Illuminate\Foundation\Http\FormRequest;
 class AutoModelRequest extends FormRequest implements DTOGetterInterface
 {
     /**
-     * @return array
+     * Определяет, авторизован ли пользователь для выполнения этого запроса.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Правила валидации для запроса.
+     *
+     * @return array<string, array<int, string>|string>
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|string'
+            'name' => ['required', 'string', 'max:255'],
         ];
     }
 
     /**
-     * @return AutoModelDTO
+     * Получить пользовательские сообщения об ошибках для валидации.
+     *
+     * @return array<string, string>
      */
-    public function getDTO(): AutoModelDTO
+    public function messages(): array
     {
-        return AutoModelDTO::from($this->validated());
+        return [
+            'name.required' => 'Название модели автомобиля обязательно для заполнения.',
+            'name.string'   => 'Название модели автомобиля должно быть строкой.',
+            'name.max'      => 'Название модели автомобиля не должно превышать 255 символов.',
+        ];
+    }
+
+    /**
+     * Получить пользовательские имена атрибутов для валидации.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'название модели автомобиля',
+        ];
+    }
+
+    /**
+     * @return AutoModelRequestDTO
+     */
+    public function getDTO(): AutoModelRequestDTO
+    {
+        return AutoModelRequestDTO::from($this->validated());
     }
 }

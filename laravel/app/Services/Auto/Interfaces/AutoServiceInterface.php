@@ -2,38 +2,62 @@
 
 namespace App\Services\Auto\Interfaces;
 
-use App\Services\Auto\DTO\AutoDTO;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Exceptions\ResourceNotFoundException;
+use App\Exceptions\ServiceException;
+use App\Services\Auto\DTO\Request\AutoRequestDTO;
+use App\Services\Auto\DTO\Response\AutoResponseDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
+ * Интерфейс для сервиса работы с автомобилями
+ *
  * @package App\Services\Auto\Interfaces
  */
 interface AutoServiceInterface
 {
     /**
-     * @return ResourceCollection
+     * Получить список всех автомобилей с пагинацией
+     *
+     * @return LengthAwarePaginator
+     * @throws ServiceException
      */
-    public function list(): ResourceCollection;
+    public function list(): LengthAwarePaginator;
 
     /**
+     * Получить список автомобилей по ID пользователя
+     *
      * @param int $userId
-     * @return ResourceCollection
+     * @return Collection<AutoResponseDTO>
+     * @throws ServiceException
      */
-    public function listByUserId(int $userId): ResourceCollection;
+    public function listByUserId(int $userId): Collection;
 
     /**
-     * @param AutoDTO $data
-     * @return JsonResource
+     * Создать новый автомобиль
+     *
+     * @param AutoRequestDTO $data
+     * @return AutoResponseDTO
+     * @throws ServiceException
      */
-    public function create(AutoDTO $data): JsonResource;
+    public function create(AutoRequestDTO $data): AutoResponseDTO;
 
     /**
+     * Обновить существующий автомобиль
+     *
      * @param int $id
-     * @param AutoDTO $data
-     * @return JsonResource
+     * @param AutoRequestDTO $data
+     * @return AutoResponseDTO
+     * @throws ResourceNotFoundException|ServiceException
      */
-    public function update(int $id, AutoDTO $data): JsonResource;
+    public function update(int $id, AutoRequestDTO $data): AutoResponseDTO;
 
+    /**
+     * Удалить автомобиль
+     *
+     * @param int $id
+     * @return void
+     * @throws ResourceNotFoundException|ServiceException
+     */
     public function destroy(int $id): void;
 }

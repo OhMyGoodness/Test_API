@@ -3,21 +3,20 @@
 namespace App\Services\User\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
-use App\Services\User\Http\Requests\UserLoginRequest;
-use App\Services\User\Resources\UserLoginResource;
-use App\Services\User\UserService;
-use Exception;
+use App\Http\Requests\UserLoginRequest;
+use App\Http\Responses\ApiResponse;
+use App\Resources\ResourceNotFoundException;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @package App\Services\User\Http\Controllers\v1
+ * Контроллер для авторизации пользователей
+ *
+ * @package App\Http\Controllers
  */
 class AuthController extends Controller
 {
-    /**
-     * @param UserService $userService
-     */
     public function __construct(private readonly UserService $userService)
     {
     }
@@ -36,24 +35,28 @@ class AuthController extends Controller
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
-     *             @OA\Schema(ref="#/components/schemas/UserLoginResource")
+     *             type="object",
+     *             @OA\Property(property="token", type="string", example="eyJhbGciOiJIUzI1...")
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="UNAUTHORIZED"
-     *     )
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=422, description="Validation Error"),
+     *     @OA\Response(response=500, description="Internal Server Error")
      * )
      *
      * @param UserLoginRequest $request
-     * @return UserLoginResource
+     * @return JsonResponse
      */
     public function login(UserLoginRequest $request): JsonResponse
     {
         try {
-            return $this->userService->login($request->getDTO());
-        } catch (Exception $exception) {
-            return response()->json()->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $token = $this->userService->login($request->getDTO());
+            return ApiResponse::success(['token' => $token]);
+        } catch (ResourceNotFoundException $exception) {
+            return ApiResponse::error(
+                'Invalid credentials',
+                Response::HTTP_UNAUTHORIZED
+            );
         }
     }
 }

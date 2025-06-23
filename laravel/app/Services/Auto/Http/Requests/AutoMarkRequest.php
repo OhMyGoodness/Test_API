@@ -3,7 +3,7 @@
 namespace App\Services\Auto\Http\Requests;
 
 use App\Interfaces\DTOGetterInterface;
-use App\Services\Auto\DTO\AutoMarkDTO;
+use App\Services\Auto\DTO\Request\AutoMarkRequestDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -28,10 +28,10 @@ class AutoMarkRequest extends FormRequest implements DTOGetterInterface
     }
 
     /**
-     * @return AutoMarkDTO
+     * @return AutoMarkRequestDTO
      */
-    public function getDTO(): AutoMarkDTO
+    public function getDTO(): AutoMarkRequestDTO
     {
-        return AutoMarkDTO::from($this->validated());
+        return AutoMarkRequestDTO::from($this->validated());
     }
 }

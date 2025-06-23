@@ -4,15 +4,17 @@ namespace App\Services\Auto\Providers;
 
 use App\Services\Auto\Interfaces\AutoServiceInterface;
 use App\Services\Auto\Services\AutoService;
-use Carbon\Laravel\ServiceProvider;
-use phpDocumentor\Reflection\Exception;
+use Exception;
+use Illuminate\Support\ServiceProvider;
 
 /**
- * @package App\Services\Auto
+ * Провайдер сервисов для модуля Auto
  */
 class AutoServiceProvider extends ServiceProvider
 {
     /**
+     * Регистрация сервисов в контейнере
+     *
      * @return void
      */
     public function register(): void
@@ -21,11 +23,11 @@ class AutoServiceProvider extends ServiceProvider
 
         $this->app->bind(AutoServiceInterface::class, function ($app) {
             $version = request()->route('version');
-            if ($version == 'v1') {
-                return new AutoService();
-            } else {
-                throw new Exception("AutoService $version not implemented");
-            }
+
+            return match ($version) {
+                'v1'    => new AutoService(),
+                default => throw new Exception("AutoService $version not implemented")
+            };
         });
     }
 }

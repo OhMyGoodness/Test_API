@@ -2,26 +2,37 @@
 
 namespace App\Services\User;
 
+use App\Models\User;
+use App\Resources\ResourceNotFoundException;
 use App\Services\User\DTO\UserLoginDTO;
-use App\Services\User\Models\User;
-use App\Services\User\Resources\UserLoginResource;
+use App\Services\User\Interfaces\UserServiceInterface;
+use Illuminate\Support\Facades\Hash;
 
 /**
- * @package App\Services\User
+ * Сервис для авторизации пользователей
+ *
+ * @package App\Services
  */
-class UserService
+class UserService implements UserServiceInterface
 {
     /**
+     * Авторизация пользователя и выдача токена
+     *
      * @param UserLoginDTO $dto
-     * @return UserLoginResource
+     * @return string Токен авторизации
+     * @throws ResourceNotFoundException
      */
-    public function login(UserLoginDTO $dto): UserLoginResource
+    public function login(UserLoginDTO $dto): string
     {
-        /** @var User $user */
-        //$user = User::query()->firstOrFail();
-        $user = User::byEmailAndPassword($dto->email, $dto->password)->firstOrFail();
-        $token = $user->createToken($user->id);
+        $user = User::query()
+                    ->byEmailAndPassword($dto->email, $dto->password)
+                    ->first();
 
-        return new UserLoginResource($token->plainTextToken);
+        if (!$user || !Hash::check($dto->password, $user->password)) {
+            throw new ResourceNotFoundException('User', $dto->email);
+        }
+
+        $token = $user->createToken('auth_token');
+        return $token->plainTextToken;
     }
 }

@@ -9,50 +9,58 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $id ID
- * @property int $year Год
- * @property int $mileage Пробег
- * @property string $color Цвет
- * @property int $auto_model_id ID модели
- * @property int $auto_mark_id ID марки
- * @property int|null $user_id ID пользователя
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * Модель для представления автомобилей
  *
- * @property AutoMark $mark
- * @property AutoModel $model
+ * @property int $id            Уникальный идентификатор автомобиля
+ * @property int $year          Год выпуска автомобиля
+ * @property int $mileage       Пробег автомобиля
+ * @property string $color      Цвет автомобиля
+ * @property int $auto_model_id ID модели автомобиля (связь с AutoModel)
+ * @property int $auto_mark_id  ID марки автомобиля (связь с AutoMark)
+ * @property int $user_id       ID пользователя
+ * @property Carbon $created_at Дата и время создания записи
+ * @property Carbon $updated_at Дата и время последнего обновления записи
  *
- * @method static byId(int $id)
- * @method static byUserId(int $userId)
+ * @property-read AutoModel $model Модель автомобиля (связь belongsTo)
+ * @property-read AutoMark $mark   Марка автомобиля (связь belongsTo)
  *
+ * @method static Builder|Auto byId(int $id)                  Фильтрация по ID автомобиля
+ * @method static Builder|Auto byUserId(int $userId)          Фильтрация по ID пользователя
  *
- * @OA\Schema(schema="Auto",
- *     @OA\Property(property="id", type="integer", description="ID", example="1"),
- *     @OA\Property(property="year", type="integer", description="Year", example="2025"),
- *     @OA\Property(property="mileage", type="integer", description="Mileage", example="10000"),
- *     @OA\Property(property="color", type="string", description="Color", example="Black"),
- *     @OA\Property(property="auto_model_id", type="integer", description="Model ID", example="1"),
- *     @OA\Property(property="auto_mark_id", type="integer", description="Mark ID", example="1"),
- *     @OA\Property(property="user_id", type="integer", description="User ID", example="1", nullable=true),
- *     @OA\Property(property="mark", ref="#/components/schemas/AutoMark"),
- *     @OA\Property(property="model", ref="#/components/schemas/AutoModel"),
- *     @OA\Property(property="created_at", type="datetime", description="Created at", example="2025-01-01 00:00:01"),
- *     @OA\Property(property="updated_at", type="datetime", description="Updated at", example="2025-01-01 00:00:01")
+ * @OA\Schema(
+ *      schema="Auto",
+ *      title="Auto",
+ *      description="Модель автомобиля",
+ *      required={"year", "mileage", "color", "auto_model_id", "auto_mark_id"},
+ *      @OA\Property(property="id", type="integer", example=1, description="Уникальный идентификатор автомобиля"),
+ *      @OA\Property(property="year", type="integer", example=2020, description="Год выпуска автомобиля"),
+ *      @OA\Property(property="mileage", type="integer", example=50000, description="Пробег автомобиля"),
+ *      @OA\Property(property="color", type="string", example="Чёрный", description="Цвет автомобиля"),
+ *      @OA\Property(
+ *          property="model",
+ *          ref="#/components/schemas/AutoModelResource",
+ *          description="Связанная модель автомобиля"
+ *      ),
+ *      @OA\Property(
+ *          property="mark",
+ *          ref="#/components/schemas/AutoMarkResource",
+ *          description="Связанная марка автомобиля"
+ *      ),
+ *      @OA\Property(property="created_at", type="string", format="date-time", example="2023-06-01T12:00:00Z", description="Дата создания записи"),
+ *      @OA\Property(property="updated_at", type="string", format="date-time", example="2023-06-10T14:30:00Z", description="Дата последнего обновления записи")
  * )
- *
- * @package App\Services\Auto\Models
  */
 class Auto extends Model
 {
     use HasFactory;
 
     /**
-     * @var string
+     * @var string Таблица в базе данных
      */
     protected $table = 'autos';
 
     /**
-     * @var string[]
+     * @var string[] Доступные для массового заполнения атрибуты
      */
     protected $fillable = [
         'year',
@@ -61,36 +69,35 @@ class Auto extends Model
         'auto_model_id',
         'auto_mark_id',
         'user_id',
-        'created_at',
-        'updated_at',
     ];
 
     /**
-     * @var string[]
+     * @var string[] Скрытые атрибуты
      */
     protected $hidden = ['user_id'];
 
     /**
+     * Преобразование типов атрибутов
+     *
      * @return string[]
      */
     public function casts(): array
     {
         return [
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'year'          => 'integer',
+            'mileage'       => 'integer',
+            'auto_model_id' => 'integer',
+            'auto_mark_id'  => 'integer',
+            'user_id'       => 'integer',
+            'created_at'    => 'datetime',
+            'updated_at'    => 'datetime',
         ];
     }
 
     /**
-     * @return BelongsTo
-     */
-    public function mark(): BelongsTo
-    {
-        return $this->belongsTo(AutoMark::class, 'auto_mark_id');
-    }
-
-    /**
-     * @return BelongsTo
+     * Связь с моделью автомобиля
+     *
+     * @return BelongsTo<AutoModel, Auto>
      */
     public function model(): BelongsTo
     {
@@ -98,6 +105,18 @@ class Auto extends Model
     }
 
     /**
+     * Связь с маркой автомобиля
+     *
+     * @return BelongsTo<AutoMark, Auto>
+     */
+    public function mark(): BelongsTo
+    {
+        return $this->belongsTo(AutoMark::class, 'auto_mark_id');
+    }
+
+    /**
+     * Фильтрация по ID автомобиля
+     *
      * @param Builder $query
      * @param int $id
      * @return Builder
@@ -108,6 +127,8 @@ class Auto extends Model
     }
 
     /**
+     * Фильтрация по ID пользователя
+     *
      * @param Builder $query
      * @param int $userId
      * @return Builder

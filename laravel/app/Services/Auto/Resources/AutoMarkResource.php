@@ -2,37 +2,36 @@
 
 namespace App\Services\Auto\Resources;
 
-use App\Services\Auto\Models\AutoMark;
+use App\Services\Auto\DTO\Response\AutoMarkResponseDTO;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @OA\Schema(schema="AutoMarkResource",
- *     @OA\Property(property="id", ref="#/components/schemas/AutoMark/properties/id"),
- *     @OA\Property(property="name", ref="#/components/schemas/AutoMark/properties/name"),
- *     @OA\Property(property="created_at", ref="#/components/schemas/AutoMark/properties/created_at"),
- *     @OA\Property(property="updated_at", ref="#/components/schemas/AutoMark/properties/updated_at"),
- * )
+ * Ресурс для преобразования марки автомобиля в JSON-ответ
  *
- * @package App\Services\Auto\Resources
+ * @property AutoMarkResponseDTO $resource
+ *
+ * @OA\Schema(
+ *     schema="AutoMarkResource",
+ *     title="AutoMarkResource",
+ *     description="Ресурс марки автомобиля",
+ *     @OA\Property(property="id", type="integer", example=1, description="Идентификатор марки"),
+ *     @OA\Property(property="name", type="string", example="Toyota", description="Название марки")
+ * )
  */
 class AutoMarkResource extends JsonResource
 {
     /**
-     * @var string
+     * Преобразует ресурс в массив для ответа API
+     *
+     * @param Request $request
+     * @return array<string, mixed>
      */
-    public $resource = AutoMark::class;
-
-    /**
-     * @param $request
-     * @return array
-     */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->resource->id,
-            'name'       => $this->resource->name,
-            'created_at' => $this->resource->created_at,
-            'updated_at' => $this->resource->updated_at,
+            'id' => $this->resource->id,
+            'name' => $this->resource->name,
         ];
     }
 }

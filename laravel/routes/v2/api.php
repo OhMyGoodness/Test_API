@@ -17,16 +17,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('auth/login', [AuthController::class, 'login'])->name('v1.auth.login');
 
-Route::prefix('{version}')
-    ->group(function () {
-        Route::get('auth/login', [AuthController::class, 'login'])->name('v1.auth.login');
-
-        $only = ['index', 'store', 'update', 'destroy'];
-        Route::resource('auto', AutoController::class, ['only' => $only]);
-        Route::resource('auto.mark', AutoMarkController::class, ['only' => $only]);
-    });
 

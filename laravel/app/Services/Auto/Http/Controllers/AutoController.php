@@ -2,151 +2,90 @@
 
 namespace App\Services\Auto\Http\Controllers;
 
-use App\Http\Controllers\ResourceController;
+use App\Exceptions\ResourceNotFoundException;
+use App\Exceptions\ServiceException;
+use App\Http\Responses\ApiResponse;
+use App\Services\Auto\Services\AutoService;
 use App\Services\Auto\Http\Requests\AutoRequest;
-use App\Services\Auto\Interfaces\AutoServiceInterface;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use App\Services\Auto\Resources\AutoResource;
+use Illuminate\Http\JsonResponse;
 
 /**
- * @package App\Services\Auto\Http\Controllers
+ * Контроллер для управления автомобилями
  */
-class AutoController extends ResourceController
+class AutoController
 {
+    public function __construct(private readonly AutoService $autoService)
+    {
+    }
+
     /**
+     * Получить список автомобилей с пагинацией
      *
-     * @param AutoServiceInterface $autoService
+     * @return JsonResponse
+     * @throws ServiceException
      */
-    public function __construct(private readonly AutoServiceInterface $autoService)
+    public function index(): JsonResponse
     {
+        $autos = $this->autoService->list();
+        return ApiResponse::success(AutoResource::collection($autos));
     }
 
     /**
-     * @return string
-     */
-    public function getRequestClass(): string
-    {
-        return AutoRequest::class;
-    }
-
-    /**
-     * @OA\Get(
-     *   path="/auto",
-     *   tags={"Auto"},
-     *   @OA\Response(
-     *       response=200,
-     *       description="OK",
-     *       @OA\JsonContent(
-     *           type="array",
-     *           @OA\Items(
-     *               ref="#/components/schemas/AutoResource"
-     *           )
-     *       )
-     *   ),
-     *   @OA\Response(response=401, description="Unauthorized"),
-     *   @OA\Response(response=404, description="Not Found")
-     * )
+     * Создать новый автомобиль
      *
-     * @return ResourceCollection
+     * @param AutoRequest $request
+     * @return JsonResponse
+     * @throws ServiceException
      */
-    public function index(): ResourceCollection
+    public function store(AutoRequest $request): JsonResponse
     {
-        $userId = Auth::user()->id ?? null;
-
-        return $userId ? $this->autoService->listByUserId($userId) : $this->autoService->list();
+        $autoResponseDTO = $this->autoService->create($request->getDto());
+        return ApiResponse::created(new AutoResource($autoResponseDTO));
     }
 
     /**
-     * @OA\Post(
-     *     path="/auto",
-     *     tags={"Auto"},
-     *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoRequest")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="OK",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoResource")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Not Found")
-     * )
-     *
-     * @param Request $request
-     * @return JsonResource
-     */
-    public function store(Request $request): JsonResource
-    {
-        return $this->autoService->create($this->getDTO());
-    }
-
-    /**
-     * @OA\Patch(
-     *     path="/auto/{id}",
-     *     tags={"Auto"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of auto",
-     *         required=true,
-     *         @OA\Schema(type="integer"),
-     *     ),
-     *     @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoRequest")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="OK",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/AutoResource")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Not Found")
-     * )
-     * @param int $id
-     * @param Request $request
-     * @return JsonResource
-     */
-    public function update(int $id, Request $request): JsonResource
-    {
-        return $this->autoService->update($id, $this->getDTO());
-    }
-
-    /**
-     * @OA\Delete(
-     *     path="/auto/{id}",
-     *     tags={"Auto"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of auto",
-     *         required=true,
-     *         @OA\Schema(type="integer"),
-     *     ),
-     *     @OA\Schema(type="integer"),
-     *     @OA\Response(response=201, description="Ok"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Not Found")
-     * )
+     * Получить автомобиль по ID
      *
      * @param int $id
-     * @return void
+     * @return JsonResponse
+     * @throws ServiceException|ResourceNotFoundException
      */
-    public function destroy(int $id): void
+    public function show(int $id): JsonResponse
+    {
+        $autoResponseDTO = $this->autoService->find($id);
+        return ApiResponse::success(new AutoResource($autoResponseDTO));
+    }
+
+    /**
+     * Обновить автомобиль
+     *
+     * @param int $id
+     * @param AutoRequest $request
+     * @return JsonResponse
+     * @throws ServiceException
+     */
+    public function update(int $id, AutoRequest $request): JsonResponse
+    {
+        $autoResponseDTO = $this->autoService->update($id, $request->getDTO());
+        return ApiResponse::success(new AutoResource($autoResponseDTO));
+    }
+
+    /**
+     * Удалить автомобиль
+     *
+     * @param int $id
+     * @return JsonResponse
+     * @throws ResourceNotFoundException|ServiceException
+     */
+    public function destroy(int $id): JsonResponse
     {
         $this->autoService->destroy($id);
+        return ApiResponse::noContent();
+    }
+
+    protected function getRequestClass(): string
+    {
+        return AutoRequest::class;
     }
 }

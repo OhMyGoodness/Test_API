@@ -2,47 +2,48 @@
 
 namespace App\Services\Auto\Resources;
 
-use App\Services\Auto\Models\Auto;
+use App\Services\Auto\DTO\Response\AutoResponseDTO;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * Ресурс для преобразования автомобиля в JSON-ответ
  *
- * @OA\Schema(schema="AutoResource",
- *     @OA\Property(
- *         property="data",
- *         @OA\Property(property="id", ref="#/components/schemas/Auto/properties/id"),
- *         @OA\Property(property="year", ref="#/components/schemas/Auto/properties/year"),
- *         @OA\Property(property="mileage", ref="#/components/schemas/Auto/properties/mileage"),
- *         @OA\Property(property="color", ref="#/components/schemas/Auto/properties/color"),
- *         @OA\Property(property="model", ref="#/components/schemas/AutoModel"),
- *         @OA\Property(property="mark", ref="#/components/schemas/AutoMark"),
- *         @OA\Property(property="created_at", ref="#/components/schemas/Auto/properties/created_at"),
- *         @OA\Property(property="updated_at", ref="#/components/schemas/Auto/properties/updated_at"),
- *     )
+ * @property AutoResponseDTO $resource
+ *
+ * @OA\Schema(
+ *     schema="AutoResource",
+ *     title="AutoResource",
+ *     description="Ресурс автомобиля",
+ *     @OA\Property(property="id", type="integer", example=1, description="Идентификатор автомобиля"),
+ *     @OA\Property(property="year", type="integer", example=2020, description="Год выпуска"),
+ *     @OA\Property(property="mileage", type="integer", example=50000, description="Пробег в километрах"),
+ *     @OA\Property(property="color", type="string", example="Чёрный", description="Цвет автомобиля"),
+ *     @OA\Property(property="model", ref="#/components/schemas/AutoModelResource", description="Модель автомобиля"),
+ *     @OA\Property(property="mark", ref="#/components/schemas/AutoMarkResource", description="Марка автомобиля"),
  * )
- *
- * @package App\Services\Auto\Resources
  */
 class AutoResource extends JsonResource
 {
-    /** @var Auto */
-    public $resource;
-
     /**
-     * @param $request
-     * @return array
+     * Преобразует ресурс в массив для ответа API
+     *
+     * @param Request $request
+     * @return array<string, mixed>
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->resource->id,
-            'year'       => $this->resource->year,
-            'mileage'    => $this->resource->mileage,
-            'color'      => $this->resource->color,
-            'model'      => new AutoModelResource($this->resource->model),
-            'mark'       => new AutoMarkResource($this->resource->mark),
-            'created_at' => $this->resource->created_at,
-            'updated_at' => $this->resource->updated_at,
+            'id'            => $this->resource->id,
+            'year'          => $this->resource->year,
+            'mileage'       => $this->resource->mileage,
+            'color'         => $this->resource->color,
+            'model'         => $this->when($this->resource->model !== null, function () {
+                return new AutoModelResource($this->resource->model);
+            }),
+            'mark'          => $this->when($this->resource->mark !== null, function () {
+                return new AutoMarkResource($this->resource->mark);
+            }),
         ];
     }
 }
