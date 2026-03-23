@@ -1,0 +1,28 @@
+<?php
+
+use App\Services\Auto\Http\Controllers\AutoController;
+use App\Services\Auto\Http\Controllers\AutoMarkController;
+use App\Services\Auto\Http\Controllers\AutoModelController;
+use App\Services\User\Http\Controllers\v1\AuthController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::post('auth/login', [AuthController::class, 'login'])->name('v1.auth.login');
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    $only = ['index', 'store', 'update', 'destroy'];
+    $onlyWithShow = ['index', 'show', 'store', 'update', 'destroy'];
+    Route::resource('auto', AutoController::class, ['only' => $only]);
+    Route::resource('models', AutoModelController::class, ['only' => $onlyWithShow]);
+    Route::resource('marks', AutoMarkController::class, ['only' => $onlyWithShow]);
+});
